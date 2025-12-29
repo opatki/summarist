@@ -21,6 +21,7 @@ import { getAuth,
 
 export default function LandingPage(): React.ReactNode {
   const [isLoginModalOpen, setIsLoginModalOpen] = React.useState<boolean>(false);
+  const [activeHeaderIndex, setActiveHeaderIndex] = React.useState<number>(0);
   const [error, setError] = React.useState<string>("");
   const router = useRouter();
   const app = initFirebase();
@@ -86,6 +87,34 @@ export default function LandingPage(): React.ReactNode {
     setError("");
     setIsLoginModalOpen(false);
   }
+
+  const features1 = [
+    "Enhance your knowledge",
+    "Achieve greater success",
+    "Improve your health",
+    "Develop better parenting skills",
+    "Increase happiness",
+    "Be the best version of yourself!"
+  ];
+
+  const features2 = [
+    "Expand your learning",
+    "Accomplish your goals",
+    "Strengthen your vitality",
+    "Become a better caregiver",
+    "Improve your mood",
+    "Maximize your abilities"
+  ];
+
+  React.useEffect(() => {
+    const intervalId = setInterval(() => {
+      setActiveHeaderIndex((prevIndex) => 
+        (prevIndex + 1) % features2.length
+      );
+    }, 2000); 
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <>
@@ -176,23 +205,20 @@ export default function LandingPage(): React.ReactNode {
 
           <div className="flex flex-col md:flex-row gap-8 md:gap-20 mb-8 md:mb-24">
             <div className="w-full flex flex-col justify-center">
-              <div className="text-2xl md:text-[32px] font-medium text-[#6b757b] mb-4">
-                Enhance your knowledge
-              </div>
-              <div className="text-2xl md:text-[32px] font-medium text-[#6b757b] mb-4">
-                Achieve greater success
-              </div>
-              <div className="text-2xl md:text-[32px] font-medium text-[#6b757b] mb-4">
-                Improve your health
-              </div>
-              <div className="text-2xl md:text-[32px] font-medium text-[#6b757b] mb-4">
-                Develop better parenting skills
-              </div>
-              <div className="text-2xl md:text-[32px] font-medium text-[#6b757b] mb-4">
-                Increase happiness
-              </div>
-              <div className="text-2xl md:text-[32px] font-medium text-[#6b757b] mb-0">
-                Be the best version of yourself!
+              <div>
+                {features1.map((text, index) => (
+                  <div
+                    key={index}
+                    className={`
+                      text-2xl md:text-[32px] font-medium 
+                      transition-colors duration-500 ease-in-out 
+                      ${index === features2.length - 1 ? "mb-0" : "mb-4"}
+                      ${index === activeHeaderIndex ? "text-[#2bd97c]" : "text-[#6b757b]"}
+                    `}
+                  >
+                    {text}
+                  </div>
+                ))}
               </div>
             </div>
             <div className="w-full flex flex-col justify-center gap-6 bg-[#f1f6f4] p-10 px-6">
@@ -242,24 +268,21 @@ export default function LandingPage(): React.ReactNode {
                 </div>
               </div>
             </div>
-            <div className="w-full flex flex-col justify-center items-start md:items-end order-1 md:order-2">
-              <div className="text-2xl md:text-[32px] font-medium text-[#6b757b] mb-4">
-                Expand your learning
-              </div>
-              <div className="text-2xl md:text-[32px] font-medium text-[#6b757b] mb-4">
-                Accomplish your goals
-              </div>
-              <div className="text-2xl md:text-[32px] font-medium text-[#6b757b] mb-4">
-                Strengthen your vitality
-              </div>
-              <div className="text-2xl md:text-[32px] font-medium text-[#6b757b] mb-4">
-                Become a better caregiver
-              </div>
-              <div className="text-2xl md:text-[32px] font-medium text-[#6b757b] mb-4">
-                Improve your mood
-              </div>
-              <div className="text-2xl md:text-[32px] font-medium text-[#6b757b] mb-0">
-                Maximize your abilities
+            <div className="w-full flex flex-col justify-center text-right md:items-end order-1 md:order-2">
+              <div>
+                {features2.map((text, index) => (
+                  <div
+                    key={index}
+                    className={`
+                      text-2xl md:text-[32px] font-medium 
+                      transition-colors duration-500 ease-in-out 
+                      ${index === features2.length - 1 ? "mb-0" : "mb-4"}
+                      ${index === activeHeaderIndex ? "text-[#2bd97c]" : "text-[#6b757b]"}
+                    `}
+                  >
+                    {text}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -330,7 +353,8 @@ export default function LandingPage(): React.ReactNode {
             </div>
           </div>
           <div className="flex justify-center">
-            <button className="btn home__cta--btn bg-[#2bd97c] text-[#032b41] w-full h-10 rounded text-base transition-colors duration-200 flex items-center justify-center min-w-[180px] max-w-[300px] hover:bg-[#20ba68] active:translate-y-[1px]">
+            <button className="btn home__cta--btn bg-[#2bd97c] text-[#032b41] w-full h-10 rounded text-base transition-colors duration-200 flex items-center justify-center min-w-[180px] max-w-[300px] hover:bg-[#20ba68] active:translate-y-[1px]"
+            onClick={openModal}>
               Login
             </button>
           </div>
