@@ -4,7 +4,7 @@ import { initFirebase } from "../firebase";
 import { getAuth } from "firebase/auth"
 import { useRouter } from 'next/navigation'
 
-export default function AccountPage() {
+export default function ForYouPage() {
     const app = initFirebase();
     const auth = getAuth(app);
     const router = useRouter();
@@ -18,10 +18,10 @@ export default function AccountPage() {
     }
 
     return (
-        <>
+        <div>  
             <h1>This is your name: {username}</h1>
             <h1>This is your email: {email}</h1>
             <button onClick={signOut}>SIgn out</button>
-        </>
+        </div>
     )
 } 

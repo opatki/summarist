@@ -9,8 +9,7 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-/src/firebase.ts
-firebase.ts
+
 
 # testing
 /coverage
@@ -25,6 +24,8 @@ firebase.ts
 # misc
 .DS_Store
 *.pem
+/src/firebase.ts
+firebase
 
 # debug
 npm-debug.log*

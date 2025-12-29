@@ -1,7 +1,7 @@
-import AccountPage from "@/src/pages/AccountPage"
+import ForYouPage from "@/src/pages/ForYouPage"
 
-export default function ForYouPage() {
+export default function ForYou() {
     return (
-        <AccountPage />
+        <ForYouPage />
     )
 }

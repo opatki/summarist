@@ -54,24 +54,32 @@ export default function LandingPage(): React.ReactNode {
       setError("");
       const result = await signInWithEmailAndPassword(auth, email, password);
       if (result.user) router.push('/for-you');
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
+    } catch (error: any) {
+      if (error.code === "auth/invalid-email") {
+        setError("Invalid email");
+      } else if (error.code === "auth/user-not-found") {
+        setError("User not found");
+      } else if (error.code === "auth/wrong-password") {
+        setError("Wrong password");
       } else {
         setError("An unknown error occurred.");
       }
     }
   }
 
-  //Signing up with email
+  // Signing up with email
   const registerWithEmail = async (email: string, password: string) => {
     try {
       setError("");
       const result = await createUserWithEmailAndPassword(auth, email, password);
       if (result.user) router.push('/for-you');
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
+    } catch (error: any) {
+      if (error.code === "auth/invalid-email") {
+        setError("Invalid email");
+      } else if (error.code === "auth/weak-password") {
+        setError("Short password"); 
+      } else if (error.code === "auth/email-already-in-use") {
+        setError("Email already in use");
       } else {
         setError("An unknown error occurred.");
       }
