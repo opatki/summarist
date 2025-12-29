@@ -1,17 +1,62 @@
+"use client"
+
 import React from "react";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { initFirebase } from "../firebase";
+import { getAuth } from "firebase/auth";
 
 interface LoginModalProps {
   closeModal: () => void;
+  google: () => void;
+  guest: () => void;
+  login: (e: string, p: string) => void;
+  register: (e: string, p: string) => void;
+  error: string;
+  setError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 type AuthMode = "login" | "signup" | "forgot";
 
-export default function AuthModal({ closeModal }: LoginModalProps): React.ReactNode {
+export default function AuthModal({ closeModal, google, guest, login, register, error, setError }: LoginModalProps): React.ReactNode {
+  const app = initFirebase();
+  const auth = getAuth(app);
   const [modalType, setModalType] = React.useState<AuthMode>("login");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [resetSuccess, setResetSuccess] = React.useState(false);
 
   function toggleAuthMode(): void {
+    setEmail("");
+    setPassword("");
+    setError("");
+    setResetSuccess(false);
     setModalType((prev) => (prev === "login" ? "signup" : "login"));
   };
+
+  function handleEmailAuth(e: React.FormEvent) {
+    e.preventDefault(); 
+    if (modalType === "login") {
+      login(email, password);
+    } else if (modalType === "signup") {
+      register(email, password);
+    }
+  }
+
+  async function handleResetPassword(e: React.FormEvent) {
+    e.preventDefault();
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setResetSuccess(true); 
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+        setResetSuccess(false); 
+      } else {
+        setError("An unknown error occurred.");
+        setResetSuccess(false); 
+      }
+    }
+  }
 
   return (
     <div 
@@ -25,15 +70,28 @@ export default function AuthModal({ closeModal }: LoginModalProps): React.ReactN
         {modalType === "forgot" && (
           <>
             <div className="pt-12 px-8 pb-6">
-              <div className="text-center text-xl font-bold text-[#032b41] mb-6">
+              <div className="text-center text-xl font-bold text-[#032b41] mb-3">
                 Reset your password
               </div>
+
+              {resetSuccess && (
+                <div className="text-[#2bd97c] mb-4 text-center">
+                  Your reset email has been sent!
+                </div>
+              )}
+
+              {error && 
+                <div className="text-[#f56c6c] mb-4 text-center">
+                  {error}
+                 </div>
+              }
               
-              <form className="flex flex-col gap-4">
+              <form className="flex flex-col gap-4" onSubmit={handleResetPassword}>
                 <input
                   className="h-10 border-2 border-[#bac8ce] rounded text-[#394547] px-3 outline-none focus:border-[#2bd97c]"
                   type="email"
                   placeholder="Email Address"
+                  onChange={(e) => setEmail(e.target.value)} 
                 />
                 <button className="bg-[#2bd97c] text-[#032b41] w-full h-10 rounded text-base transition-colors duration-200 flex items-center justify-center min-w-[180px] hover:bg-[#20ba68]">
                   <span>Send reset password link</span>
@@ -42,8 +100,8 @@ export default function AuthModal({ closeModal }: LoginModalProps): React.ReactN
             </div>
             
             <button 
-              className="w-full h-10 text-center bg-[#f1f6f4] text-[#116be9] rounded-b font-light text-base hover:bg-[#e1e8e6] transition-colors duration-200"
-              onClick={() => setModalType("login")}
+              className="w-full h-10 text-center bg-[#xf1f6f4] text-[#116be9] rounded-b font-light text-base hover:bg-[#e1e8e6] transition-colors duration-200"
+              onClick={() => {setResetSuccess(false); setModalType("login")} }
             >
               Go to login
             </button>
@@ -57,9 +115,18 @@ export default function AuthModal({ closeModal }: LoginModalProps): React.ReactN
                 {modalType === "signup" ? "Sign up to Summarist" : "Log in to Summarist"}
               </div>
 
+              {error && 
+                <div className="text-[#f56c6c] mb-4 text-center">
+                  {error}
+                 </div>
+              }
+
               {modalType === "login" && (
                 <>
-                  <button className="relative flex items-center justify-center w-full h-10 rounded text-base text-white bg-[#3a579d] min-w-[180px] transition-colors duration-200 hover:bg-[#314a86]">
+                  <button 
+                    className="relative flex items-center justify-center w-full h-10 rounded text-base text-white bg-[#3a579d] min-w-[180px] transition-colors duration-200 hover:bg-[#314a86]"
+                    onClick={guest} 
+                  >
                     <figure className="absolute left-[2px] flex items-center justify-center w-9 h-9 rounded bg-transparent">
                       <svg
                         className="w-6 h-6"
@@ -83,7 +150,7 @@ export default function AuthModal({ closeModal }: LoginModalProps): React.ReactN
                 </>
               )}
 
-              <button className="relative flex items-center justify-center w-full h-10 rounded text-base text-white bg-[#4285f4] min-w-[180px] transition-colors duration-200 hover:bg-[#3367d6]">
+              <button className="relative flex items-center justify-center w-full h-10 rounded text-base text-white bg-[#4285f4] min-w-[180px] transition-colors duration-200 hover:bg-[#3367d6]" onClick={google}>
                 <figure className="absolute left-[2px] flex items-center justify-center w-9 h-9 rounded bg-white">
                   <img
                     alt="google"
@@ -98,18 +165,25 @@ export default function AuthModal({ closeModal }: LoginModalProps): React.ReactN
                 <span className="mx-6 text-sm font-medium text-[#394547]">or</span>
               </div>
               
-              <form className="flex flex-col gap-4">
+              <form className="flex flex-col gap-4" onSubmit={handleEmailAuth}>
                 <input
                   className="h-10 border-2 border-[#bac8ce] rounded text-[#394547] px-3 outline-none focus:border-[#2bd97c]"
-                  type="text"
+                  type="email"
                   placeholder="Email Address"
+                  required 
+                  onChange={(e) => setEmail(e.target.value)} 
                 />
                 <input
                   className="h-10 border-2 border-[#bac8ce] rounded text-[#394547] px-3 outline-none focus:border-[#2bd97c]"
                   type="password"
                   placeholder="Password"
+                  required 
+                  onChange={(e) => setPassword(e.target.value)} 
                 />
-                <button className="bg-[#2bd97c] text-[#032b41] w-full h-10 rounded text-base transition-colors duration-200 flex items-center justify-center min-w-[180px] hover:bg-[#20ba68]">
+                <button 
+                  type="submit" 
+                  className="bg-[#2bd97c] text-[#032b41] w-full h-10 rounded text-base transition-colors duration-200 flex items-center justify-center min-w-[180px] hover:bg-[#20ba68]"
+                >
                   <span>{modalType === "signup" ? "Sign up" : "Login"}</span>
                 </button>
               </form>

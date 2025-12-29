@@ -8,21 +8,94 @@ import { RiLeafLine } from 'react-icons/ri';
 import AuthModal from '../components/AuthModal';
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
+import { useRouter } from 'next/navigation';
+import { initFirebase } from "../firebase";
+import { getAuth, 
+         GoogleAuthProvider,
+         signInWithPopup, 
+         signInWithEmailAndPassword, 
+         createUserWithEmailAndPassword, 
+         signInAnonymously,
+         sendPasswordResetEmail } from "firebase/auth"
+
 
 export default function LandingPage(): React.ReactNode {
   const [isLoginModalOpen, setIsLoginModalOpen] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string>("");
+  const router = useRouter();
+  const app = initFirebase();
+  const auth = getAuth(app);
+
+  // Google Login
+  const provider = new GoogleAuthProvider();
+  const signInGoogle = async () => {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    if (user) {
+      router.push('/for-you');
+    }
+  }
+
+  // Anonymous Login
+  const signInGuest = async () => {
+    try {
+      const result = await signInAnonymously(auth);
+      if (result.user) router.push('/for-you');
+    } catch (error) {
+      console.error("Guest Sign In Error:", error);
+    }
+  }
+
+  // Login with email and password
+  const loginWithEmail = async (email: string, password: string) => {
+    try {
+      setError("");
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      if (result.user) router.push('/for-you');
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unknown error occurred.");
+      }
+    }
+  }
+
+  //Signing up with email
+  const registerWithEmail = async (email: string, password: string) => {
+    try {
+      setError("");
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      if (result.user) router.push('/for-you');
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unknown error occurred.");
+      }
+    }
+  }
 
   function openModal(): void {
+    setError("");
     setIsLoginModalOpen(true);
   }
 
   function closeModal(): void {
+    setError("");
     setIsLoginModalOpen(false);
   }
 
   return (
     <>
-    {isLoginModalOpen && <AuthModal closeModal={closeModal} />}
+    {isLoginModalOpen && <AuthModal google={signInGoogle} 
+                                    guest={signInGuest}
+                                    login={loginWithEmail}
+                                    register={registerWithEmail}
+                                    closeModal={closeModal}
+                                    error={error}
+                                    setError={setError} />}
     <Nav open={openModal} />
     <section id="landing">
       <div className="py-10 w-full">
