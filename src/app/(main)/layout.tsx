@@ -8,8 +8,8 @@ export default async function PageLayout({ children }: { children: React.ReactNo
         <>
             <Sidebar />
             <Search />
-            <div className="mx-auto w-full px-60">
-                <div className="py-10">
+            <div className="mx-auto w-full pl-50">
+                <div className="py-5">
                     {children}
                 </div>
             </div>

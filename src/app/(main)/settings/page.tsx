@@ -7,6 +7,7 @@ import LoginPrompt from '@/src/components/LoginPrompt';
 
 export default function Settings() {
     const user = useAppSelector((state) => state.user);
+    console.log(user)
 
     return (
         <div className="mx-auto w-full max-w-[1070px] px-6">
@@ -14,7 +15,7 @@ export default function Settings() {
                 Settings
             </div>
 
-            {user.uid ? <LoginPrompt /> : (
+            {!user.uid ? <LoginPrompt /> : (
                 <>
                     <div className="mb-8 flex flex-col items-start gap-2 border-b border-[#e1e7ea] pb-6">
                         <div className="text-lg font-bold text-[#032b41]">Your Subscription plan</div>
