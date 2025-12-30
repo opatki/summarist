@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import AdjustedSidebar from "./AdjustedSidebar";
 import Search from "./Search";
 import type { Book } from "../types";
+import { useAppSelector } from "../app/redux/hooks";
+import LoginPrompt from "./LoginPrompt";
 
 interface BookPlayerProps {
   book: Book;
@@ -15,6 +17,7 @@ export default function BookPlayer({ book }: BookPlayerProps) {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [fontSize, setFontSize] = useState("text-base");
+  const user = useAppSelector((state) => state.user);
 
   const togglePlay = () => {
     if (audioRef.current) {
@@ -63,11 +66,13 @@ export default function BookPlayer({ book }: BookPlayerProps) {
   const progressPercentage = (currentTime / duration) * 100 || 0;
 
   return (
+
     <>
       <AdjustedSidebar font={fontSize} changeFont={setFontSize} />
       <Search />
       <div className="mx-auto w-full pl-50">
         <div className="py-5">
+        {!user.uid ? <LoginPrompt page="read and listen to this book." /> :
           <div className="relative w-full overflow-y-auto h-[calc(100vh-160px)]">
             <div className="whitespace-pre-line p-6 max-w-[800px] mx-auto text-base">
               <div className="text-[#032b41] font-semibold text-xl md:text-2xl border-b border-[#e1e7ea] mb-8 pb-4 mt-[-8px] leading-normal">
@@ -148,7 +153,7 @@ export default function BookPlayer({ book }: BookPlayerProps) {
 
               </div>
             </div>
-          </div>
+          </div>}
         </div>
       </div>
     </>

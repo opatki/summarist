@@ -1,6 +1,6 @@
 import { useModal } from "../ModalProvider";
 
-export default function LoginPrompt({}) {
+export default function LoginPrompt({ page }: {page: string}) {
     const { openModal } = useModal();
 
     return (
@@ -12,7 +12,7 @@ export default function LoginPrompt({}) {
                 className="h-full w-full"
                 />
                 <div className="mb-4 text-center text-2xl font-bold text-[#032b41]">
-                Log in to your account to see your library.
+                Log in to your account to {page}
                 </div>
                 <button onClick={openModal} className="flex h-10 w-[100px] min-w-[180px] cursor-pointer items-center justify-center rounded bg-[#2bd97c] text-base text-[#032b41] outline-none transition-colors duration-200">
                     Login
