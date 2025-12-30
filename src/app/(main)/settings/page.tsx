@@ -9,7 +9,7 @@ export default function Settings() {
     const user = useAppSelector((state) => state.user);
 
     return (
-        <div className="mx-auto w-full max-w-[1070px] px-6">
+        <div className="mx-auto w-full max-w-fit px-6">
             <div className="mb-8 border-b border-[#e1e7ea] pb-4 text-left text-2xl font-bold text-[#032b41] md:text-[32px]">
                 Settings
             </div>

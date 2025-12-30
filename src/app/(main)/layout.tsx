@@ -1,7 +1,6 @@
 import Sidebar from "@/src/components/Sidebar"
 import Search from "@/src/components/Search"
 
-
 export default async function PageLayout({ children }: { children: React.ReactNode }) {
 
     return (

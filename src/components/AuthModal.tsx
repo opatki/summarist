@@ -140,7 +140,7 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
 
   return (
     <div 
-      className="fixed inset-0 bg-black/75 flex items-center justify-center z-1001"
+      className="fixed inset-0 bg-black/75 flex items-center justify-center z-1003"
       onClick={closeModal} 
     >
       <div 
