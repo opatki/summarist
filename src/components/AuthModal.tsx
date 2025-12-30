@@ -1,29 +1,99 @@
 "use client"
 
 import React from "react";
-import { sendPasswordResetEmail } from "firebase/auth";
+import { useRouter } from 'next/navigation';
 import { initFirebase } from "../firebase";
-import { getAuth } from "firebase/auth";
+import { 
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInAnonymously,
+  sendPasswordResetEmail
+} from "firebase/auth";
 
-interface LoginModalProps {
+interface AuthModalProps {
   closeModal: () => void;
-  google: () => void;
-  guest: () => void;
-  login: (e: string, p: string) => void;
-  register: (e: string, p: string) => void;
-  error: string;
-  setError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 type AuthMode = "login" | "signup" | "forgot";
 
-export default function AuthModal({ closeModal, google, guest, login, register, error, setError }: LoginModalProps): React.ReactNode {
+export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNode {
   const app = initFirebase();
   const auth = getAuth(app);
+  const router = useRouter();
+
   const [modalType, setModalType] = React.useState<AuthMode>("login");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [error, setError] = React.useState<string>("");
   const [resetSuccess, setResetSuccess] = React.useState(false);
+
+  // --- Auth Functions ---
+
+  // Google Login
+  const signInGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      if (result.user) {
+        router.push('/for-you');
+      }
+    } catch (err) {
+      console.error("Google Sign In Error:", err);
+    }
+  }
+
+  // Anonymous Login
+  const signInGuest = async () => {
+    try {
+      const result = await signInAnonymously(auth);
+      if (result.user) router.push('/for-you');
+    } catch (error) {
+      console.error("Guest Sign In Error:", error);
+    }
+  }
+
+  // Login with email and password
+  const loginWithEmail = async () => {
+    try {
+      setError("");
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      if (result.user) router.push('/for-you');
+    } catch (error: any) {
+      if (error.code === "auth/invalid-email") {
+        setError("Invalid email");
+      } else if (error.code === "auth/user-not-found") {
+        setError("User not found");
+      } else if (error.code === "auth/wrong-password") {
+        setError("Wrong password");
+      } else {
+        setError("An unknown error occurred.");
+      }
+    }
+  }
+
+  // Signing up with email
+  const registerWithEmail = async () => {
+    try {
+      setError("");
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      if (result.user) router.push('/for-you');
+    } catch (error: any) {
+      if (error.code === "auth/invalid-email") {
+        setError("Invalid email");
+      } else if (error.code === "auth/weak-password") {
+        setError("Short password"); 
+      } else if (error.code === "auth/email-already-in-use") {
+        setError("Email already in use");
+      } else {
+        setError("An unknown error occurred.");
+      }
+    }
+  }
+
+  // --- UI Handlers ---
 
   function toggleAuthMode(): void {
     setEmail("");
@@ -36,9 +106,9 @@ export default function AuthModal({ closeModal, google, guest, login, register, 
   function handleEmailAuth(e: React.FormEvent) {
     e.preventDefault(); 
     if (modalType === "login") {
-      login(email, password);
+      loginWithEmail();
     } else if (modalType === "signup") {
-      register(email, password);
+      registerWithEmail();
     }
   }
 
@@ -100,8 +170,8 @@ export default function AuthModal({ closeModal, google, guest, login, register, 
             </div>
             
             <button 
-              className="w-full h-10 text-center bg-[#xf1f6f4] text-[#116be9] rounded-b font-light text-base hover:bg-[#e1e8e6] transition-colors duration-200"
-              onClick={() => {setResetSuccess(false); setModalType("login")} }
+              className="w-full h-10 text-center bg-[#f1f6f4] text-[#116be9] rounded-b font-light text-base hover:bg-[#e1e8e6] transition-colors duration-200"
+              onClick={() => {setError(""); setResetSuccess(false); setModalType("login")} }
             >
               Go to login
             </button>
@@ -125,7 +195,7 @@ export default function AuthModal({ closeModal, google, guest, login, register, 
                 <>
                   <button 
                     className="relative flex items-center justify-center w-full h-10 rounded text-base text-white bg-[#3a579d] min-w-[180px] transition-colors duration-200 hover:bg-[#314a86]"
-                    onClick={guest} 
+                    onClick={signInGuest} 
                   >
                     <figure className="absolute left-[2px] flex items-center justify-center w-9 h-9 rounded bg-transparent">
                       <svg
@@ -150,7 +220,7 @@ export default function AuthModal({ closeModal, google, guest, login, register, 
                 </>
               )}
 
-              <button className="relative flex items-center justify-center w-full h-10 rounded text-base text-white bg-[#4285f4] min-w-[180px] transition-colors duration-200 hover:bg-[#3367d6]" onClick={google}>
+              <button className="relative flex items-center justify-center w-full h-10 rounded text-base text-white bg-[#4285f4] min-w-[180px] transition-colors duration-200 hover:bg-[#3367d6]" onClick={signInGoogle}>
                 <figure className="absolute left-[2px] flex items-center justify-center w-9 h-9 rounded bg-white">
                   <img
                     alt="google"
@@ -192,7 +262,7 @@ export default function AuthModal({ closeModal, google, guest, login, register, 
             {modalType === "login" && (
               <div 
                 className="text-center text-[#116be9] font-light text-sm w-fit mx-auto mb-4 cursor-pointer hover:underline"
-                onClick={() => setModalType("forgot")}
+                onClick={() => {setError(""); setModalType("forgot")}}
               >
                 Forgot your password?
               </div>

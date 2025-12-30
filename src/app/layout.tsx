@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import AuthRouter from "./AuthRouter";
+import ReduxProvider from "./redux/ReduxProvider";
 
 export const metadata: Metadata = {
   title: "Summarist",
@@ -19,9 +21,13 @@ export default function RootLayout({ children }: Readonly<{children: React.React
             rel="stylesheet"
           />
         </head>
-        <body className="flex flex-col min-h-screen">
-          {children}
-        </body>
+        <ReduxProvider>
+          <body className="flex flex-col min-h-screen">
+            <AuthRouter>
+              {children}
+            </AuthRouter>
+          </body>
+        </ReduxProvider>
       </html>
   )
 }
