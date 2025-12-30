@@ -33,7 +33,7 @@ export default function Sidebar() {
         <div className="fixed left-0 top-0 z-[1000] h-screen w-[200px] min-w-[200px] bg-[#f7faf9] transition-all duration-300 ease-in-out">
             <div className="mx-auto flex h-[60px] max-w-[160px] items-center justify-center pt-4">
                 <img 
-                src="logo.png" 
+                src="logo.png"
                 alt="Logo" 
                 className="h-10 w-full object-contain" 
                 />
