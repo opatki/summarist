@@ -6,9 +6,11 @@ import Link from "next/link";
 import { initFirebase } from '../firebase';
 import { getAuth, signOut } from "firebase/auth";
 import { useAppSelector } from "../app/redux/hooks";
+import { useModal } from '../ModalProvider';
 
 
 export default function Sidebar() {
+    const { openModal } = useModal();
     const app = initFirebase();
     const auth = getAuth(app);
     const pathname = usePathname();
@@ -20,12 +22,10 @@ export default function Sidebar() {
             try {
                 await signOut(auth);
             } catch (error) {
-                console.error("Error signing out:", error);
+                alert("Error signing out:");
             }
         } else {
-            // 2. Open Login Modal logic
-            // Usually, you'd pass a prop here or set a global 'modal' state in Redux
-            console.log("Open Login Modal");
+            openModal();
         }
     };
 
@@ -33,7 +33,7 @@ export default function Sidebar() {
         <div className="fixed left-0 top-0 z-[1000] h-screen w-[200px] min-w-[200px] bg-[#f7faf9] transition-all duration-300 ease-in-out">
             <div className="mx-auto flex h-[60px] max-w-[160px] items-center justify-center pt-4">
                 <img 
-                src="logo.png"
+                src="/logo.png"
                 alt="Logo" 
                 className="h-10 w-full object-contain" 
                 />

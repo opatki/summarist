@@ -7,7 +7,6 @@ import LoginPrompt from '@/src/components/LoginPrompt';
 
 export default function Settings() {
     const user = useAppSelector((state) => state.user);
-    console.log(user)
 
     return (
         <div className="mx-auto w-full max-w-[1070px] px-6">

@@ -5,21 +5,13 @@ import { AiFillFileText, AiFillBulb, AiFillAudio } from 'react-icons/ai';
 import { BsStarFill, BsStarHalf } from 'react-icons/bs';
 import { BiCrown } from 'react-icons/bi';
 import { RiLeafLine } from 'react-icons/ri';
-import AuthModal from '../components/AuthModal';
+import { useModal } from '../ModalProvider';
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
 
 export default function LandingPage(): React.ReactNode {
-  const [isLoginModalOpen, setIsLoginModalOpen] = React.useState<boolean>(false);
+  const { openModal } = useModal();
   const [activeHeaderIndex, setActiveHeaderIndex] = React.useState<number>(0);
-
-  function openModal(): void {
-    setIsLoginModalOpen(true);
-  }
-
-  function closeModal(): void {
-    setIsLoginModalOpen(false);
-  }
 
   const features1 = [
     "Enhance your knowledge",
@@ -51,7 +43,6 @@ export default function LandingPage(): React.ReactNode {
 
   return (
     <>
-    {isLoginModalOpen && <AuthModal closeModal={closeModal} />}
     <Nav open={openModal} />
     <section id="landing">
       <div className="py-10 w-full">

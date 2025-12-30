@@ -39,6 +39,7 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
       const result = await signInWithPopup(auth, provider);
       if (result.user) {
         router.push('/for-you');
+        closeModal();
       }
     } catch (err) {
       console.error("Google Sign In Error:", err);
@@ -49,7 +50,10 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
   const signInGuest = async () => {
     try {
       const result = await signInAnonymously(auth);
-      if (result.user) router.push('/for-you');
+      if (result.user) {
+        router.push('/for-you');
+        closeModal();
+      }
     } catch (error) {
       console.error("Guest Sign In Error:", error);
     }
@@ -60,7 +64,10 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
     try {
       setError("");
       const result = await signInWithEmailAndPassword(auth, email, password);
-      if (result.user) router.push('/for-you');
+      if (result.user) {
+        router.push('/for-you');
+        closeModal();
+      }
     } catch (error: any) {
       if (error.code === "auth/invalid-email") {
         setError("Invalid email");
@@ -79,7 +86,10 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
     try {
       setError("");
       const result = await createUserWithEmailAndPassword(auth, email, password);
-      if (result.user) router.push('/for-you');
+      if (result.user) {
+        router.push('/for-you');
+        closeModal();
+      }
     } catch (error: any) {
       if (error.code === "auth/invalid-email") {
         setError("Invalid email");
@@ -130,7 +140,7 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
 
   return (
     <div 
-      className="fixed inset-0 bg-black/75 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/75 flex items-center justify-center z-1001"
       onClick={closeModal} 
     >
       <div 
@@ -225,7 +235,7 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
                   <img
                     alt="google"
                     className="w-6 h-6"
-                    src="google.png" 
+                    src="/google.png" 
                   />
                 </figure>
                 <div>{modalType === "signup" ? "Sign up with Google" : "Login with Google"}</div>
