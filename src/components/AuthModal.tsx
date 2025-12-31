@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React from "react";
 import { useRouter } from 'next/navigation';
@@ -12,6 +12,7 @@ import {
   signInAnonymously,
   sendPasswordResetEmail
 } from "firebase/auth";
+import { useAppDispatch } from "../app/redux/hooks";
 
 interface AuthModalProps {
   closeModal: () => void;
@@ -30,10 +31,14 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
   const [error, setError] = React.useState<string>("");
   const [resetSuccess, setResetSuccess] = React.useState(false);
 
+  // loading state to track which button is active: 'google', 'guest', 'email', 'reset', or null
+  const [authLoading, setAuthLoading] = React.useState<string | null>(null);
+
   // --- Auth Functions ---
 
   // Google Login
   const signInGoogle = async () => {
+    setAuthLoading("google");
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
@@ -43,11 +48,13 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
       }
     } catch (err) {
       console.error("Google Sign In Error:", err);
+      setAuthLoading(null); // Stop loading on error
     }
   }
 
   // Anonymous Login
   const signInGuest = async () => {
+    setAuthLoading("guest");
     try {
       const result = await signInAnonymously(auth);
       if (result.user) {
@@ -56,11 +63,13 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
       }
     } catch (error) {
       console.error("Guest Sign In Error:", error);
+      setAuthLoading(null);
     }
   }
 
   // Login with email and password
   const loginWithEmail = async () => {
+    setAuthLoading("email");
     try {
       setError("");
       const result = await signInWithEmailAndPassword(auth, email, password);
@@ -69,6 +78,7 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
         closeModal();
       }
     } catch (error: any) {
+      setAuthLoading(null);
       if (error.code === "auth/invalid-email") {
         setError("Invalid email");
       } else if (error.code === "auth/user-not-found") {
@@ -83,6 +93,7 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
 
   // Signing up with email
   const registerWithEmail = async () => {
+    setAuthLoading("email");
     try {
       setError("");
       const result = await createUserWithEmailAndPassword(auth, email, password);
@@ -91,6 +102,7 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
         closeModal();
       }
     } catch (error: any) {
+      setAuthLoading(null);
       if (error.code === "auth/invalid-email") {
         setError("Invalid email");
       } else if (error.code === "auth/weak-password") {
@@ -124,10 +136,13 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
 
   async function handleResetPassword(e: React.FormEvent) {
     e.preventDefault();
+    setAuthLoading("reset");
     try {
       await sendPasswordResetEmail(auth, email);
       setResetSuccess(true); 
+      setAuthLoading(null);
     } catch (error) {
+      setAuthLoading(null);
       if (error instanceof Error) {
         setError(error.message);
         setResetSuccess(false); 
@@ -138,9 +153,14 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
     }
   }
 
+  // Reusable Loader Component
+  const Loader = () => (
+    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+  );
+
   return (
     <div 
-      className="fixed inset-0 bg-black/75 flex items-center justify-center z-1003"
+      className="fixed inset-0 bg-black/75 flex items-center justify-center z-[1003]"
       onClick={closeModal} 
     >
       <div 
@@ -174,7 +194,7 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
                   onChange={(e) => setEmail(e.target.value)} 
                 />
                 <button className="bg-[#2bd97c] text-[#032b41] w-full h-10 rounded text-base transition-colors duration-200 flex items-center justify-center min-w-[180px] hover:bg-[#20ba68]">
-                  <span>Send reset password link</span>
+                  {authLoading === "reset" ? <Loader /> : <span>Send reset password link</span>}
                 </button>
               </form>
             </div>
@@ -221,7 +241,7 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
                         <path d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"></path>
                       </svg>
                     </figure>
-                    <div>Login as a Guest</div>
+                    {authLoading === "guest" ? <Loader /> : <div>Login as a Guest</div>}
                   </button>
 
                   <div className="flex items-center my-4 before:content-[''] before:flex-1 before:h-[1px] before:bg-[#bac8ce] after:content-[''] after:flex-1 after:h-[1px] after:bg-[#bac8ce]">
@@ -230,7 +250,10 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
                 </>
               )}
 
-              <button className="relative flex items-center justify-center w-full h-10 rounded text-base text-white bg-[#4285f4] min-w-[180px] transition-colors duration-200 hover:bg-[#3367d6]" onClick={signInGoogle}>
+              <button 
+                className="relative flex items-center justify-center w-full h-10 rounded text-base text-white bg-[#4285f4] min-w-[180px] transition-colors duration-200 hover:bg-[#3367d6]" 
+                onClick={signInGoogle}
+              >
                 <figure className="absolute left-[2px] flex items-center justify-center w-9 h-9 rounded bg-white">
                   <img
                     alt="google"
@@ -238,7 +261,11 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
                     src="/google.png" 
                   />
                 </figure>
-                <div>{modalType === "signup" ? "Sign up with Google" : "Login with Google"}</div>
+                {authLoading === "google" ? (
+                    <Loader />
+                ) : (
+                    <div>{modalType === "signup" ? "Sign up with Google" : "Login with Google"}</div>
+                )}
               </button>
 
               <div className="flex items-center my-4 before:content-[''] before:flex-1 before:h-[1px] before:bg-[#bac8ce] after:content-[''] after:flex-1 after:h-[1px] after:bg-[#bac8ce]">
@@ -264,7 +291,11 @@ export default function AuthModal({ closeModal }: AuthModalProps): React.ReactNo
                   type="submit" 
                   className="bg-[#2bd97c] text-[#032b41] w-full h-10 rounded text-base transition-colors duration-200 flex items-center justify-center min-w-[180px] hover:bg-[#20ba68]"
                 >
-                  <span>{modalType === "signup" ? "Sign up" : "Login"}</span>
+                  {authLoading === "email" ? (
+                    <Loader />
+                  ) : (
+                    <span>{modalType === "signup" ? "Sign up" : "Login"}</span>
+                  )}
                 </button>
               </form>
             </div>

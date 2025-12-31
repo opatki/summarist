@@ -1,41 +1,37 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface UserState {
-  email: string | null;
   uid: string | null;
-  displayName: string | null;
-  isSubscribed: boolean | null;
+  email: string | null;
+  isSubscribed: boolean;
+  userLoaded: boolean; // <--- ADD THIS
 }
 
 const initialState: UserState = {
-  email: null,
   uid: null,
-  displayName: null,
-  isSubscribed: false
-}
+  email: null,
+  isSubscribed: false,
+  userLoaded: false, // <--- Initially false (we don't know yet)
+};
 
 export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<UserState>) => {
-      state.email = action.payload.email;
+    setUser: (state, action) => {
       state.uid = action.payload.uid;
-      state.displayName = action.payload.displayName;
-      state.isSubscribed = false;
+      state.email = action.payload.email;
+      state.isSubscribed = action.payload.isSubscribed;
+      state.userLoaded = true; // <--- We found them, so loading is done
     },
     removeUser: (state) => {
-      state.email = null;
       state.uid = null;
-      state.displayName = null;
-      state.isSubscribed = null;
+      state.email = null;
+      state.isSubscribed = false;
+      state.userLoaded = true; // <--- We checked and found NO ONE, but loading is still done
     },
-    upgradeUser: (state) => {
-      state.isSubscribed = true;
-    }
-  }
-})
+  },
+});
 
-export const { setUser, removeUser } = userSlice.actions
-
-export default userSlice.reducer
+export const { setUser, removeUser } = userSlice.actions;
+export default userSlice.reducer;

@@ -70,7 +70,7 @@ export default function BookPlayer({ book }: BookPlayerProps) {
     <>
       <AdjustedSidebar font={fontSize} changeFont={setFontSize} />
       <Search />
-      <div className="mx-auto w-full pl-50">
+      <div className="mx-auto w-full md:pl-50">
         <div className="py-5">
         {!user.uid ? <LoginPrompt page="read and listen to this book." /> :
           <div className="relative w-full overflow-y-auto h-[calc(100vh-160px)]">
@@ -104,7 +104,7 @@ export default function BookPlayer({ book }: BookPlayerProps) {
                       />
                     </div>
                   </figure>
-                  <div className="text-white text-sm hidden md:flex flex-col gap-0.5 justify-center overflow-hidden">
+                  <div className="text-white text-sm flex flex-col gap-0.5 justify-center overflow-hidden">
                     <div className="font-medium text-xs lg:text-sm truncate">{book.title}</div>
                     <div className="text-[#bac8ce] text-xs">{book.author}</div>
                   </div>

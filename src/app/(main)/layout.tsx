@@ -7,7 +7,7 @@ export default async function PageLayout({ children }: { children: React.ReactNo
         <>
             <Sidebar />
             <Search />
-            <div className="mx-auto w-full pl-50">
+            <div className="mx-auto w-full overflow-x-hidden md:pl-50">
                 <div className="py-5">
                     {children}
                 </div>

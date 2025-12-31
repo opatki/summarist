@@ -3,6 +3,7 @@ import "./globals.css";
 import AuthRouter from "./AuthRouter";
 import ReduxProvider from "./redux/ReduxProvider";
 import { ModalProvider } from "../ModalProvider";
+import { SidebarProvider } from "../SidebarContext";
 
 export const metadata: Metadata = {
   title: "Summarist",
@@ -24,11 +25,13 @@ export default function RootLayout({ children }: Readonly<{children: React.React
         </head>
         <ReduxProvider>
           <body className="flex flex-col min-h-screen">
+            <SidebarProvider>
             <ModalProvider>
               <AuthRouter>
                 {children}
               </AuthRouter>
             </ModalProvider>
+            </SidebarProvider>
           </body>
         </ReduxProvider>
       </html>

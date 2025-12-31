@@ -18,12 +18,16 @@ export default async function SelectedBook() {
         <div className="hidden md:block w-[1px] bg-[#bac8ce] shrink-0" />
 
         <div className="flex gap-4 w-full md:w-[60%]">
-            <figure className="h-[140px] w-[140px] min-w-[140px] shrink-0">
-            <img
-                className="w-full h-full block"
-                src={selectedBook.imageLink}
-                alt="book"
-            />
+            <figure className="relative h-[140px] w-[140px] min-w-[140px] shrink-0">
+                {/* Background Skeleton */}
+                <div className="absolute inset-0 bg-[#e0e0e0] rounded" />
+                
+                {/* Image */}
+                <img
+                    className="relative w-full h-full block object-cover"
+                    src={selectedBook.imageLink}
+                    alt="book"
+                />
             </figure>
 
             <div className="flex flex-col justify-center">

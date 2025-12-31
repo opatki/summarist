@@ -4,9 +4,37 @@ import React from "react"
 import Accordion from "@/src/components/Accordion"
 import Footer from "@/src/components/Footer"
 import PricingSelection from "@/src/components/PricingSelection"
+import { getCheckoutUrl } from "@/src/stripe/stripePayment"
+import { initFirebase } from "@/src/firebase"
+import { getAuth } from "firebase/auth"
+import { useRouter } from "next/navigation"
 
 export default function ChoosePlanPage() {
+    const app = initFirebase();
+    const auth = getAuth(app);
+    const router = useRouter();
     const [selectedPlan, setSelectedPlan] = React.useState<'yearly' | 'monthly'>('yearly');
+
+    async function handleClick() {
+        try {
+            const MONTHLY_PRICE_ID = 'price_1SkBfSRyp2mLcN0HkMwav7jv'; 
+            const YEARLY_PRICE_ID = 'price_1SkBe5Ryp2mLcN0HQlF8wgVK';
+            let priceId = '';
+
+            if (selectedPlan === 'yearly') {
+                priceId = YEARLY_PRICE_ID;
+            } else if (selectedPlan === 'monthly') {
+                priceId = MONTHLY_PRICE_ID;
+            }
+
+            if (!priceId) return;
+            const checkoutUrl = await getCheckoutUrl(app, priceId);
+            router.push(checkoutUrl);
+        } catch (error) {
+            console.error("Checkout failed:", error);
+            alert("Could not initiate checkout. Please check if you are logged in.");
+        }
+    }
 
     return (
         <div className="w-full">
@@ -67,7 +95,7 @@ export default function ChoosePlanPage() {
 
                     <div className="sticky bottom-0 z-10 bg-white py-8 flex flex-col items-center gap-4">
                         <span className="block">
-                        <button className="hover:bg-[#20ba68] w-[300px] bg-[#2be080] text-[#032b41] py-3 rounded text-lg transition-all">
+                        <button onClick={handleClick} className="hover:bg-[#20ba68] w-[300px] bg-[#2be080] text-[#032b41] py-3 rounded text-lg transition-all">
                             <span>
                             {selectedPlan === 'yearly' 
                                 ? "Start your free 7-day trial" 

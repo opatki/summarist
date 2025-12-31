@@ -1,3 +1,5 @@
+import { Firestore } from "firebase/firestore";
+
 export interface Book {
   id: string;
   author: string;
@@ -15,4 +17,9 @@ export interface Book {
   tags: string[];
   bookDescription: string;
   authorDescription: string;
+}
+
+export interface propsIsSubbed {
+  db: Firestore, 
+  userId: string
 }

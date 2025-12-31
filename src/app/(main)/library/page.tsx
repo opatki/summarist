@@ -40,7 +40,7 @@ export default function LibraryPage() {
         <>
             {!user.uid ? <LoginPrompt page="see your library."/> : (
             <div className="w-full max-w-fit container mx-auto px-4 font-sans">
-            <div className="w-full py-5 mx-auto min-w-[1000px]">
+            <div className="w-full py-5 mx-auto lg:min-w-[1000px] sm:min-w-[0px] md:min-w-[500px]">
                 <div className="mb-3 text-[22px] font-bold text-[#032b41]">
                     Saved Books
                 </div>
