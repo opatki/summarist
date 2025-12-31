@@ -4,14 +4,14 @@ interface UserState {
   uid: string | null;
   email: string | null;
   isSubscribed: boolean;
-  userLoaded: boolean; // <--- ADD THIS
+  userLoaded: boolean; 
 }
 
 const initialState: UserState = {
   uid: null,
   email: null,
   isSubscribed: false,
-  userLoaded: false, // <--- Initially false (we don't know yet)
+  userLoaded: false, 
 };
 
 export const userSlice = createSlice({
@@ -22,13 +22,13 @@ export const userSlice = createSlice({
       state.uid = action.payload.uid;
       state.email = action.payload.email;
       state.isSubscribed = action.payload.isSubscribed;
-      state.userLoaded = true; // <--- We found them, so loading is done
+      state.userLoaded = true; 
     },
     removeUser: (state) => {
       state.uid = null;
       state.email = null;
       state.isSubscribed = false;
-      state.userLoaded = true; // <--- We checked and found NO ONE, but loading is still done
+      state.userLoaded = true; 
     },
   },
 });

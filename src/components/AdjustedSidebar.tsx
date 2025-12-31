@@ -15,8 +15,6 @@ export default function AdjustedSidebar({ font, changeFont }: { font: string, ch
     const auth = getAuth(app);
     const pathname = usePathname();
     const user = useAppSelector((state) => state.user);
-    
-    // Use Context
     const { isSidebarOpen, closeSidebar } = useSidebar();
 
     const handleAuthClick = async () => {
@@ -37,7 +35,6 @@ export default function AdjustedSidebar({ font, changeFont }: { font: string, ch
 
     return (
         <>
-            {/* Mobile Overlay */}
             {isSidebarOpen && (
                 <div 
                     className="fixed inset-0 z-[999] bg-black/50 md:hidden"
@@ -45,7 +42,6 @@ export default function AdjustedSidebar({ font, changeFont }: { font: string, ch
                 />
             )}
 
-            {/* Sidebar Container */}
             <div className={`fixed left-0 top-0 z-[1000] h-screen w-[200px] min-w-[200px] bg-[#f7faf9] transition-transform duration-300 ease-in-out 
                 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
                 md:translate-x-0`}
@@ -184,8 +180,6 @@ export default function AdjustedSidebar({ font, changeFont }: { font: string, ch
                         </div>
                         <div className="text-base font-medium">{user.uid ? "Logout" : "Login"}</div>
                     </div>
-
-                    
                 </div>
             </div>
         </div>

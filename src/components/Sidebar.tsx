@@ -15,8 +15,6 @@ export default function Sidebar() {
     const auth = getAuth(app);
     const pathname = usePathname();
     const user = useAppSelector((state) => state.user);
-
-    // Use Context instead of local state
     const { isSidebarOpen, closeSidebar } = useSidebar();
 
     const handleAuthClick = async () => {
@@ -31,14 +29,12 @@ export default function Sidebar() {
         }
     };
 
-    // Closes sidebar when a link is clicked
     const handleLinkClick = () => {
         closeSidebar();
     }
 
     return (
         <>
-            {/* Mobile Overlay (Click to close) */}
             {isSidebarOpen && (
                 <div 
                     className="fixed inset-0 z-[999] bg-black/50 md:hidden"
@@ -46,7 +42,6 @@ export default function Sidebar() {
                 />
             )}
 
-            {/* Sidebar Container */}
             <div className={`fixed left-0 top-0 z-[1000] h-screen w-[200px] min-w-[200px] bg-[#f7faf9] transition-transform duration-300 ease-in-out 
                 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
                 md:translate-x-0`}

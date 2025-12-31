@@ -2,29 +2,15 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useSidebar } from '../SidebarContext'; // Adjust path if needed
-
-interface Book {
-  id: string;
-  imageLink: string;
-  title: string;
-  author: string;
-  averageRating: number;
-  subTitle: string;
-  audioLink: string;
-  totalRating: number;
-  keyIdeas: number;
-  type: string;
-  status: string;
-  subscriptionRequired: boolean;
-}
+import { useSidebar } from '../SidebarContext';
+import { formatTime } from '../getTime';
+import type { Book } from '../types';
+import SearchResultItem from './SearchResultItem';
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Book[]>([]);
   const [loading, setLoading] = useState(false);
-  
-  // Connect to the Sidebar Context
   const { toggleSidebar } = useSidebar();
 
   useEffect(() => {
@@ -108,8 +94,7 @@ export default function Search() {
             </div>
           </div>
 
-          {/* Mobile Toggle Button (Hamburger) */}
-          <div 
+          <div
             className="flex cursor-pointer items-center justify-center text-[#03314b] md:hidden"
             onClick={toggleSidebar}
           >
@@ -139,43 +124,11 @@ export default function Search() {
               </div>
             ) : searchResults.length > 0 ? (
               searchResults.map((book) => (
-                <Link
-                  href={`/book/${book.id}`}
+                <SearchResultItem
                   key={book.id}
+                  book={book}
                   onClick={clearSearch}
-                  className="flex h-[120px] items-center gap-6 border-b border-[#e1e7ea] p-4 hover:bg-[#f1f6f4] last:border-b-0"
-                >
-                  <figure className="h-20 w-20 min-w-[80px]">
-                    <img
-                      className="h-full w-full object-cover"
-                      src={book.imageLink}
-                      alt={book.title}
-                    />
-                  </figure>
-                  <div>
-                    <div className="mb-2 text-base font-medium text-[#032b41]">
-                      {book.title}
-                    </div>
-                    <div className="mb-2 text-sm font-light text-[#6b757b]">
-                      {book.author}
-                    </div>
-                    <div className="flex items-center gap-1 text-sm font-light text-[#6b757b]">
-                      <div className="flex h-4 w-4">
-                        <svg
-                          stroke="currentColor"
-                          fill="currentColor"
-                          strokeWidth="0"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path>
-                          <path d="M13 7h-2v6h6v-2h-4z"></path>
-                        </svg>
-                      </div>
-                      <div className="text-sm">03:24</div>
-                    </div>
-                  </div>
-                </Link>
+                />
               ))
             ) : (
               <div className="flex h-6 items-center justify-start text-[#032b41]">

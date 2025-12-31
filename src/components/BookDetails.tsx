@@ -7,6 +7,7 @@ import { useModal } from '../ModalProvider';
 import { useRouter } from 'next/navigation';
 import { getDoc, deleteDoc, setDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { formatTime } from '../getTime';
 
 
 interface BookDetailsProps {
@@ -19,46 +20,43 @@ export default function BookDetails({ book }: BookDetailsProps) {
     const { openModal } = useModal();
     const [bookSaved, setBookSaved] = React.useState(false); 
     const [subbed, setSubbed] = React.useState<boolean | null>(false);
+    const [duration, setDuration] = React.useState(0); 
+    const audioRef = React.useRef<HTMLAudioElement>(null);
+
+
+    const handleLoadedMetadata = () => {
+        const seconds = audioRef.current?.duration;
+        if (seconds && isFinite(seconds)) {
+        setDuration(seconds);
+    }
+  };
     
-    // ---------------------------------------------------------------------------
-    // LOADING STATE (SKELETON)
-    // ---------------------------------------------------------------------------
     if (!book) {
         return (
             <div className="mx-auto w-full px-4 max-w-[1100px] py-10">
-                {/* Changed to flex-col for mobile, row for large screens */}
                 <div className="flex flex-col gap-10 lg:flex-row">
                     
-                    {/* Text Section: Order 2 on mobile (bottom), Order 1 on desktop (left) */}
                     <div className="w-full order-2 lg:order-1">
-                        {/* Title */}
                         <div className="h-10 w-3/4 bg-[#e4e4e4] mb-4 rounded" />
                         
-                        {/* Author */}
                         <div className="h-6 w-1/4 bg-[#e4e4e4] mb-4 rounded" />
                         
-                        {/* Subtitle */}
                         <div className="h-8 w-2/3 bg-[#e4e4e4] mb-4 rounded" />
 
-                        {/* Stats Grid */}
                         <div className="border-t border-b border-[#e1e7ea] py-4 mb-6">
                             <div className="flex flex-wrap max-w-[400px] gap-y-3">
-                                {/* Stat 1 */}
                                 <div className="w-1/2 flex items-center">
                                     <div className="h-5 w-5 bg-[#e4e4e4] rounded-full mr-2" />
                                     <div className="h-4 w-12 bg-[#e4e4e4] rounded" />
                                 </div>
-                                {/* Stat 2 */}
                                 <div className="w-1/2 flex items-center">
                                     <div className="h-5 w-5 bg-[#e4e4e4] rounded-full mr-2" />
                                     <div className="h-4 w-12 bg-[#e4e4e4] rounded" />
                                 </div>
-                                {/* Stat 3 */}
                                 <div className="w-1/2 flex items-center">
                                     <div className="h-5 w-5 bg-[#e4e4e4] rounded-full mr-2" />
                                     <div className="h-4 w-12 bg-[#e4e4e4] rounded" />
                                 </div>
-                                {/* Stat 4 */}
                                 <div className="w-1/2 flex items-center">
                                     <div className="h-5 w-5 bg-[#e4e4e4] rounded-full mr-2" />
                                     <div className="h-4 w-12 bg-[#e4e4e4] rounded" />
@@ -66,29 +64,24 @@ export default function BookDetails({ book }: BookDetailsProps) {
                             </div>
                         </div>
 
-                        {/* Buttons */}
                         <div className="flex gap-4 mb-6">
                             <div className="w-36 h-12 bg-[#e4e4e4] rounded" />
                             <div className="w-36 h-12 bg-[#e4e4e4] rounded" />
                         </div>
 
-                        {/* Bookmark Link */}
                         <div className="flex items-center gap-2 mb-10">
                             <div className="h-5 w-5 bg-[#e4e4e4] rounded" />
                             <div className="h-5 w-40 bg-[#e4e4e4] rounded" />
                         </div>
 
-                        {/* "What's it about?" Header */}
                         <div className="h-6 w-40 bg-[#e4e4e4] mb-4 rounded" />
 
-                        {/* Tags */}
                         <div className="flex flex-wrap gap-4 mb-4">
                             <div className="h-12 w-24 bg-[#e4e4e4] rounded" />
                             <div className="h-12 w-32 bg-[#e4e4e4] rounded" />
                             <div className="h-12 w-28 bg-[#e4e4e4] rounded" />
                         </div>
 
-                        {/* Book Description */}
                         <div className="space-y-3 mb-8">
                             <div className="h-4 w-full bg-[#e4e4e4] rounded" />
                             <div className="h-4 w-full bg-[#e4e4e4] rounded" />
@@ -96,17 +89,14 @@ export default function BookDetails({ book }: BookDetailsProps) {
                             <div className="h-4 w-[80%] bg-[#e4e4e4] rounded" />
                         </div>
 
-                        {/* "About the author" Header */}
                         <div className="h-6 w-40 bg-[#e4e4e4] mb-4 rounded" />
 
-                        {/* Author Description */}
                         <div className="space-y-3">
                             <div className="h-4 w-full bg-[#e4e4e4] rounded" />
                             <div className="h-4 w-[90%] bg-[#e4e4e4] rounded" />
                         </div>
                     </div>
 
-                    {/* Image Section: Order 1 on mobile (top), Order 2 on desktop (right) */}
                     <div className="order-1 lg:order-2 flex justify-center lg:block">
                         <div className="w-[300px] h-[300px] bg-[#e4e4e4] rounded" />
                     </div>
@@ -114,10 +104,6 @@ export default function BookDetails({ book }: BookDetailsProps) {
             </div>
         );
     }
-
-    // ---------------------------------------------------------------------------
-    // LOADED STATE
-    // ---------------------------------------------------------------------------
 
     React.useEffect(() => {
         if (user) {
@@ -170,10 +156,8 @@ export default function BookDetails({ book }: BookDetailsProps) {
 
     return (
         <div className="mx-auto w-full px-4 max-w-[1100px] py-10">
-            {/* Added flex-col for mobile, kept lg:flex-row */}
             <div className="flex flex-col gap-10 lg:flex-row">
                 
-                {/* Text Content: Order 2 on mobile (bottom), Order 1 on desktop (left) */}
                 <div className="w-full order-2 lg:order-1">
                     <div className="text-[32px] text-[#032b41] mb-4 font-semibold">
                         {book!.title}
@@ -198,7 +182,12 @@ export default function BookDetails({ book }: BookDetailsProps) {
                                 <div className="flex h-6 w-6 mr-1">
                                     <svg className="w-full h-full" stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"></path><path d="M686.7 638.6L544.1 535.5V288c0-4.4-3.6-8-8-8H488c-4.4 0-8 3.6-8 8v275.4c0 2.6 1.2 5 3.3 6.5l165.4 120.6c3.6 2.6 8.6 1.8 11.2-1.7l28.6-39c2.6-3.7 1.8-8.7-1.8-11.2z"></path></svg>
                                 </div>
-                                <div className="inner-book__duration">03:24</div>
+                                <audio
+                                    ref={audioRef}
+                                    src={book.audioLink}
+                                    onLoadedMetadata={handleLoadedMetadata}
+                                />
+                                <div className="inner-book__duration">{formatTime(duration)}</div>
                             </div>
                             <div className="flex items-center w-1/2 text-[#032b41] font-medium text-sm">
                                 <div className="flex h-6 w-6 mr-1">
@@ -279,7 +268,6 @@ export default function BookDetails({ book }: BookDetailsProps) {
                     </div>
                 </div>
 
-                {/* Image Section: Order 1 on mobile (top), Order 2 on desktop (right) */}
                 <div className="order-1 lg:order-2 flex justify-center lg:block">
                     <figure className="w-[300px] h-[300px] min-w-[300px]">
                         <img className="block w-full h-full" src={book!.imageLink} alt="book" />

@@ -38,7 +38,6 @@ useEffect(() => {
   return <>{children}</>;
 }
 
-// 2. Export the main Provider
 export default function ReduxProvider({ children }: { children: React.ReactNode }) {
   return (
     <Provider store={store}>

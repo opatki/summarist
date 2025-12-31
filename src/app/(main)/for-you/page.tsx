@@ -11,9 +11,7 @@ export default function ForYouPage() {
             Selected just for you
           </div>
             <SelectedBook />
-            
         </div>
-
         <div>
           <div className="text-[22px] font-bold text-[#032b41] mb-3">
             Recommended For You

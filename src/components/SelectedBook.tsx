@@ -19,10 +19,7 @@ export default async function SelectedBook() {
 
         <div className="flex gap-4 w-full md:w-[60%]">
             <figure className="relative h-[140px] w-[140px] min-w-[140px] shrink-0">
-                {/* Background Skeleton */}
                 <div className="absolute inset-0 bg-[#e0e0e0] rounded" />
-                
-                {/* Image */}
                 <img
                     className="relative w-full h-full block object-cover"
                     src={selectedBook.imageLink}

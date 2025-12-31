@@ -6,11 +6,8 @@ import { useAppSelector } from '../../redux/hooks';
 import LoginPrompt from '@/src/components/LoginPrompt';
 
 export default function Settings() {
-    // We rely purely on the global Redux state now
     const user = useAppSelector((state) => state.user);
 
-    // If userLoaded is false, it means Firebase is still checking. 
-    // Show the skeletons.
     if (!user.userLoaded) {
         return (
             <div className="mx-auto w-full max-w-[1100px] px-6">
@@ -27,7 +24,6 @@ export default function Settings() {
         );
     }
 
-    // Once loaded, we check if we have a UID
     return (
         <div className="mx-auto w-full max-w-[1100px] px-6">
             <div className="mb-8 border-b border-[#e1e7ea] pb-4 text-left text-2xl font-bold text-[#032b41] md:text-[32px]">
@@ -35,7 +31,6 @@ export default function Settings() {
             </div>
 
             {!user.uid ? (
-                /* Show LoginPrompt only if loaded AND no user */
                 <LoginPrompt page="see your details."/> 
             ) : (
                 <>

@@ -25,13 +25,11 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   return (
     <ModalContext.Provider value={{ openModal, closeModal, isModalOpen }}>
       {children}
-      {/* The Modal lives here, globally accessible */}
       {isModalOpen && <AuthModal closeModal={closeModal} />} 
     </ModalContext.Provider>
   );
 }
 
-// Custom hook to use the modal easily
 export function useModal() {
   const context = useContext(ModalContext);
   if (!context) {
