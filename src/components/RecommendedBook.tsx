@@ -25,7 +25,7 @@ export default function RecommendedBook({ type }: { type: string }) {
     }, [type]);
 
     return (
-        <div className="flex overflow-hidden gap-4 mb-6 pb-4">
+        <div className="flex overflow-hidden gap-4 mb-6 pb-4 flex-wrap justify-center">
             {loading ? (
                 Array.from({ length: 5 }).map((_, index) => (
                     <div key={index} className="min-w-[200px] w-[200px] snap-start shrink-0">

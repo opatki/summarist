@@ -80,7 +80,7 @@ export default function Search() {
         </div>
 
         {searchQuery.length > 0 && (
-          <div className="absolute top-[104px] right-6 z-50 flex max-h-[640px] w-full max-w-[440px] flex-col overflow-y-auto border border-[#e1e7ea] bg-white p-4 shadow-lg">
+          <div className="absolute top-[104px] right-1 sm:p-6 z-50 flex max-h-[640px] w-full max-w-[440px] flex-col overflow-y-auto border border-[#e1e7ea] bg-white p-4 shadow-lg">
             {isSearching ? (
               // --- UPDATED SKELETON STATE ---
               Array.from({ length: 5 }).map((_, index) => (

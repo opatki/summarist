@@ -19,6 +19,9 @@ const AuthRouter = (props: any) => {
     firebaseUser: User | null | undefined
   ) => {
     if (!isLoading) {
+      if (!firebaseUser) {
+        router.push("/")
+      }
       if (firebaseUser && pathName === "/") {
         router.push("/for-you")
       }

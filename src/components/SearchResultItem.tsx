@@ -23,13 +23,13 @@ export default function SearchResultItem({ book, onClick }: { book: Book; onClic
         />
       </figure>
       <div>
-        <div className="mb-2 text-base font-medium text-[#032b41]">
+        <div className="mb-2 text-[12px] font-medium text-[#032b41] sm:text-sm">
           {book.title}
         </div>
-        <div className="mb-2 text-sm font-light text-[#6b757b]">
+        <div className="mb-2 text-[12px] font-light text-[#6b757b] sm:text-sm">
           {book.author}
         </div>
-        <div className="flex items-center gap-1 text-sm font-light text-[#6b757b]">
+        <div className="flex items-center gap-1 text-[12px] sm:text-sm font-light text-[#6b757b]">
           <div className="flex h-4 w-4">
             <svg
               stroke="currentColor"
@@ -46,7 +46,7 @@ export default function SearchResultItem({ book, onClick }: { book: Book; onClic
             src={book.audioLink}
             onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
           />
-          <div className="text-sm">{formatTime(duration)}</div>
+          <div className="text-[12px] sm:text-sm">{formatTime(duration)}</div>
         </div>
       </div>
     </Link>

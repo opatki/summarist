@@ -10,7 +10,7 @@ export default function SavedBook({ books }: { books: Book[] }) {
     const isLoading = !books || books.length === 0;
 
     return (
-        <div className="flex overflow-hidden gap-4 mb-6 pb-4">
+        <div className="flex overflow-hidden gap-4 mb-6 pb-4 flex-wrap justify-center">
             {isLoading ? (
                 Array.from({ length: 5 }).map((_, index) => (
                     <div key={index} className="min-w-[200px] w-[200px] snap-start shrink-0">
