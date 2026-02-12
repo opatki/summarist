@@ -59,3 +59,28 @@ Engineered with a mobile-first approach using Tailwind CSS, ensuring that the re
 ### 1. Clone the repository
 ```bash
 git clone [https://github.com/opatki/summarist.git](https://github.com/opatki/summarist.git)
+```
+### 2. Install dependencies
+```bash
+cd summarist
+npm install
+```
+
+### 3. Environment Setup
+Create a .env.local file in the root directory and add your credentials:
+```bash
+NEXT_PUBLIC_FIREBASE_API_KEY=your_key
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_key
+STRIPE_SECRET_KEY=your_key
+```
+
+### 4. Run the development server
+```bash
+npm run dev
+```
+
+### 5. Open the app
+Visit: http://localhost:3000
+
+
+
